@@ -111,13 +111,10 @@ def logistic_regression(dfEncode):
 def predict(dfEncode, d):
     X_train, X_test, y_train, y_test = split_dataset(dfEncode)
 
-    df_test = pd.DataFrame(data=d)
-
-    clf = LogisticRegression()
+    clf = LogisticRegression(max_iter=1000)
     clf.fit(X_train, y_train)
 
-    y_pred = clf.predict(df_test)
-
+    y_pred = clf.predict(d)
     print(y_pred)
 
 
@@ -161,20 +158,22 @@ if __name__ == "__main__":
     # checkNull()
     # plot_box()
     dfEncode = encoding()
-    d = {
-        "Age": [45],
-        "Sex": [0],
-        "ChestPainType": [1],
-        "RestingBP": [0],
-        "Cholesterol": [22],
-        "FastingBS": [35],
-        "RestingECG": [0],
-        "MaxHR": [1],
-        "ExerciseAngina": [46],
-        "Oldpeak": [1],
-    }
-
+    d = [
+        {
+            "Age": 35,
+            "Sex": 1,
+            "ChestPainType": 0,
+            "RestingBP": 49,
+            "Cholesterol": 0,
+            "FastingBS": 1,
+            "RestingECG": 2,
+            "MaxHR": 80,
+            "ExerciseAngina": 0,
+            "Oldpeak": 45,
+        }
+    ]
+    df = pd.DataFrame(d)
     # logistic_regression(dfEncode)
-    predict(dfEncode, d)
+    predict(dfEncode, df)
 
 # %%
