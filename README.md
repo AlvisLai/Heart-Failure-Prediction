@@ -36,7 +36,7 @@ Install the following packages for Raspberry PI
 
 3. you may edit main.py as you want
 
-### DataSet Attributess
+### Dataset Attributess
 * Age: age of the patient [years]
 * Sex: sex of the patient [M: Male, F: Female]
 * ChestPainType: chest pain type [TA: Typical Angina, ATA: Atypical Angina, NAP: Non-Anginal Pain, ASY: Asymptomatic]
