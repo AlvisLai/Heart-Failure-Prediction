@@ -114,6 +114,9 @@ def predict(dfEncode, d):
     clf = LogisticRegression(max_iter=1000)
     clf.fit(X_train, y_train)
 
+    score = clf.score(X_test, y_test)
+    print("the score:", score)
+
     y_pred = clf.predict(d)
     print(y_pred)
 
