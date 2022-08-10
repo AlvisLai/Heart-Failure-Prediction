@@ -1,4 +1,3 @@
-# %%
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -7,6 +6,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
+from sklearn import tree
+from sklearn.metrics import accuracy_score
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVC
 
 # Load the data
 df = pd.read_csv("heart.csv")
@@ -62,7 +66,6 @@ def plot_box():
         "Age",
         "ChestPainType",
         "RestingBP",
-        "Cholesterol",
         "MaxHR",
         "Oldpeak",
     ]
@@ -77,11 +80,11 @@ def plot_box():
 
 
 def checkNull():
-    df.isnull().sum()
+    print(df.isnull().sum())
     # no null value
 
 
-def normalization():
+def normalization(df):
     return (df - df.min()) / (df.max() - df.min())
 
 
@@ -93,89 +96,134 @@ def split_dataset(df):
     return X_train, X_test, y_train, y_test
 
 
-def logistic_regression(dfEncode):
-    X_train, X_test, y_train, y_test = split_dataset(dfEncode)
-
+def logistic_regression(X_train, X_test, y_train, y_test):
     clf = LogisticRegression(max_iter=1000)
     clf.fit(X_train, y_train)
 
-    y_pred = clf.predict(X_test)
+    clf.predict(X_test)
     score = clf.score(X_test, y_test)
-    
-    #print("the score:", score)
 
-    #print("X_test", X_test)
-    #y_pred = clf.predict(X_test)
-    #print(y_pred)
+    print("logistic_regression score:", score)
+
+    # print("X_test", X_test)
+    # y_pred = clf.predict(X_test)
+    # print("y_pred", y_pred)
     return clf
 
 
 def predict(clf, d):
     y_pred = clf.predict(d)
-
-    if(y_pred[0] == 1):
-        print("Heart Failure!!")
-    else:
-        print("Save!")
+    # print(y_pred)
+    for pre in y_pred:
+        if pre == 1:
+            print("Heart Failure!!")
+        else:
+            print("Save!")
 
 
 def encoding():
     df_encode = df.apply(LabelEncoder().fit_transform)
     df_encode.head()
-    # df = df_encode
-    # print("df_encode", df_encode)
     return df_encode
 
 
-def decision_tree():
-    X_train, X_test, y_train, y_test = split_dataset()
+def decision_tree(X_train, X_test, y_train, y_test):
     # Build the tree
-    df = DecisionTreeClassifier(
-        min_samples_split=20, criterion="entropy", random_state=42
-    )
+    dt = DecisionTreeClassifier(criterion="entropy", random_state=42)
     # Fit the training data
-    df.fit(X_train, y_train)
+    dt.fit(X_train, y_train)
+    plt.figure(figsize=(100, 100))
+    tree.plot_tree(dt)
+
+    testY_predict = dt.predict(X_test)
+    # print("testY_predict: ", testY_predict)
+    testY_scores = accuracy_score(y_test, testY_predict)
+    print("testY_scores: ", testY_scores)
+
+    score = np.mean(cross_val_score(dt, X_train, y_train, cv=10))
+    print("decision_tree cross_val_score:", score)
 
 
-def clustering():
-    data_norm = normalization()
+def svm(X_train, X_test, y_train, y_test):
+    model1 = SVC(kernel="rbf", random_state=0, probability=True)
+    model1.fit(X_train, y_train)
+    print("accurancy score of linear :", model1.score(X_test, y_test))
+
+    model3 = SVC(kernel="rbf", random_state=0, probability=True, C=3)
+    model3.fit(X_train, y_train)
+    print("accurancy score of rbf c=3:", model3.score(X_test, y_test))
+
+
+def clustering(df):
     model = KMeans(n_clusters=6)  # 6 clusters?
-    model.fit(data_norm)
+    model.fit(df)
     print(model.labels_)
-    data_norm["clust"] = pd.Series(model.labels_)
-    data_norm.head()
+    df["clust"] = pd.Series(model.labels_)
+    df.head()
     print(model.cluster_centers_)
     print(model.inertia_)
     plt.figure()
     plt.xlabel("clust")
     plt.ylabel("number")
-    plt.hist(data_norm["clust"])
+    plt.hist(df["clust"])
 
 
 if __name__ == "__main__":
-    # dataDetail()
-    # pairwise()
-    # histogram()
-    # checkNull()
-    # plot_box()
+    dataDetail()
+    pairwise()
+    histogram()
+    plot_box()
+    checkNull()
     dfEncode = encoding()
+    df_norm = normalization(dfEncode)
+    X_train, X_test, y_train, y_test = split_dataset(df_norm)
+    clf = logistic_regression(X_train, X_test, y_train, y_test)
+
+    # clustering(df_norm)
+    decision_tree(X_train, X_test, y_train, y_test)
+    svm(X_train, X_test, y_train, y_test)
+
+    # predict
     d = [
         {
-            "Age": 29,
+            "Age": 19,
+            "Sex": 1,
+            "ChestPainType": 3,
+            "RestingBP": 120,
+            "Cholesterol": 0,
+            "FastingBS": 0,
+            "RestingECG": 0,
+            "MaxHR": 122,
+            "ExerciseAngina": 0,
+            "Oldpeak": 1,
+            "ST_Slope": 0,
+        },
+        {
+            "Age": 80,
+            "Sex": 0,
+            "ChestPainType": 0,
+            "RestingBP": 39,
+            "Cholesterol": 72,
+            "FastingBS": 0,
+            "RestingECG": 1,
+            "MaxHR": 150,
+            "ExerciseAngina": 1,
+            "Oldpeak": 3,
+            "ST_Slope": 1,
+        },
+        {
+            "Age": 80,
             "Sex": 1,
             "ChestPainType": 0,
-            "RestingBP": 19,
-            "Cholesterol": 0,
+            "RestingBP": 45,
+            "Cholesterol": 51,
             "FastingBS": 1,
-            "RestingECG": 2,
-            "MaxHR": 60,
+            "RestingECG": 1,
+            "MaxHR": 67,
             "ExerciseAngina": 0,
-            "Oldpeak": 45,
-            "ST_Slope": 2
-        }
+            "Oldpeak": 42,
+            "ST_Slope": 1,
+        },  # dead!
     ]
-    df = pd.DataFrame(d)
-    clf = logistic_regression(dfEncode)
-    predict(clf, df)
-
-# %%
+    df_test = pd.DataFrame(d)
+    predict(clf, df_test)
