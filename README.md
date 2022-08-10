@@ -2,7 +2,7 @@
 Heart Failure Prediction
 
 ## About The Project
-An python based prediction, using Heart Failure Prediction Dataset
+An python based Heart Failure Prediction, using Heart Failure Prediction Dataset
 
 ### Project dependencies
 
