@@ -34,7 +34,7 @@ Install the following packages for Raspberry PI
    ```
 2. access and run main.py
 
-3. you may edit main,py as you want
+3. you may edit main.py as you want
 
 <!-- LICENSE -->
 ## License
