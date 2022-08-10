@@ -87,7 +87,7 @@ def normalization():
 
 def split_dataset(df):
     # Split the dataset - train test split
-    x = df.iloc[:, 0:11]
+    x = df.iloc[:, 0:10]
     y = df.iloc[:, 11]
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
     return X_train, X_test, y_train, y_test
@@ -96,27 +96,29 @@ def split_dataset(df):
 def logistic_regression(dfEncode):
     X_train, X_test, y_train, y_test = split_dataset(dfEncode)
 
-    clf = LogisticRegression(max_iter=1000)
+    clf = LogisticRegression()
     clf.fit(X_train, y_train)
 
     y_pred = clf.predict(X_test)
     score = clf.score(X_test, y_test)
-    
-    #print("the score:", score)
+    print("the score:", score)
 
-    #print("X_test", X_test)
-    #y_pred = clf.predict(X_test)
-    #print(y_pred)
-    return clf
+    print("X_test", X_test)
+    y_pred = clf.predict(X_test)
+    print(y_pred)
 
 
-def predict(clf, d):
-    y_pred = clf.predict(d)
+def predict(dfEncode, d):
+    X_train, X_test, y_train, y_test = split_dataset(dfEncode)
 
-    if(y_pred[0] == 1):
-        print("Heart Failure!!")
-    else:
-        print("Save!")
+    df_test = pd.DataFrame(data=d)
+
+    clf = LogisticRegression()
+    clf.fit(X_train, y_train)
+
+    y_pred = clf.predict(df_test)
+
+    print(y_pred)
 
 
 def encoding():
@@ -159,23 +161,20 @@ if __name__ == "__main__":
     # checkNull()
     # plot_box()
     dfEncode = encoding()
-    d = [
-        {
-            "Age": 29,
-            "Sex": 1,
-            "ChestPainType": 0,
-            "RestingBP": 19,
-            "Cholesterol": 0,
-            "FastingBS": 1,
-            "RestingECG": 2,
-            "MaxHR": 60,
-            "ExerciseAngina": 0,
-            "Oldpeak": 45,
-            "ST_Slope": 2
-        }
-    ]
-    df = pd.DataFrame(d)
-    clf = logistic_regression(dfEncode)
-    predict(clf, df)
+    d = {
+        "Age": [45],
+        "Sex": [0],
+        "ChestPainType": [1],
+        "RestingBP": [0],
+        "Cholesterol": [22],
+        "FastingBS": [35],
+        "RestingECG": [0],
+        "MaxHR": [1],
+        "ExerciseAngina": [46],
+        "Oldpeak": [1],
+    }
+
+    # logistic_regression(dfEncode)
+    predict(dfEncode, d)
 
 # %%
