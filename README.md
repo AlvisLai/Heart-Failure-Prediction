@@ -30,7 +30,7 @@ Install the following packages for Raspberry PI
 ### Installation
 1. Clone the repo
    ```sh
-   git clone https://github.com/AlvisLai/Smart-Garden-System
+   git clone https://github.com/AlvisLai/Heart-Failure-Prediction
    ```
 2. access and run main.py
 
