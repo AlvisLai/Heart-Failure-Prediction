@@ -195,11 +195,12 @@ def encoding():
     return df_encode
 
 
-def decision_tree(X_train, X_test, y_train, y_test):
+def decision_tree(df):
+    X_train, X_test, y_train, y_test = split_dataset(df)
     target_name = "HeartDisease"
     feature_names=df.columns.to_list()
     feature_names.remove(target_name)
-    
+        
     # Build the tree
     dt = DecisionTreeClassifier(min_samples_split=30, criterion="entropy", random_state=42)
     # Fit the training data
@@ -209,7 +210,6 @@ def decision_tree(X_train, X_test, y_train, y_test):
                           class_names=['0','1'], filled ='True')
 
     testY_predict = dt.predict(X_test)
-    # print("testY_predict: ", testY_predict)
     testY_scores = accuracy_score(y_test, testY_predict)
     print("Decision Tree Scores: ", testY_scores)
 
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     clf = logistic_regression(X_train, X_test, y_train, y_test)
 
     # clustering(df_norm)
-    decision_tree(X_train, X_test, y_train, y_test)
+    decision_tree(dfEncode)
     svm(X_train, X_test, y_train, y_test)
 
     # predict
