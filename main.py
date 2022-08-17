@@ -74,14 +74,15 @@ def feature_histgram(feature):
 def plot_box():
     columns = [
         "Age",
-        "ChestPainType",
         "RestingBP",
+        "Cholesterol",
+        "FastingBS",
         "MaxHR",
         "Oldpeak",
     ]
-
-    for column in columns:
-        plt.figure()
+    plt.figure(figsize=(20, 20))
+    for index, column in enumerate(columns):
+        plt.subplot(4, 3, index + 1)
         sns.boxplot(
             data=df,
             y=column,
