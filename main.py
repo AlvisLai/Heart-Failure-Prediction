@@ -60,7 +60,8 @@ def histogram():
             shrink=0.8,
         )
 
-def feature_histgram(feature):    
+
+def feature_histgram(feature):
     plt.figure()
     sns.histplot(
         data=df,
@@ -129,7 +130,7 @@ def logistic_regression(X_train, X_test, y_train, y_test):
     clf = LogisticRegression(C=0.0001, max_iter=1000)
     clf.fit(X_train, y_train)
 
-    #clf.predict(X_test)
+    # clf.predict(X_test)
     score = clf.score(X_test, y_test)
 
     print("logistic_regression score:", score)
@@ -142,7 +143,7 @@ def logistic_regression(X_train, X_test, y_train, y_test):
 
 def predict(clf, d):
     y_predict = clf.predict(d)
-    y_predict_proba = clf.predict_proba(d)[:,1]
+    y_predict_proba = clf.predict_proba(d)[:, 1]
     # print(y_pred)
     for predict in y_predict:
         if predict == 1:
@@ -151,16 +152,17 @@ def predict(clf, d):
             print("Save!")
     print("====================================")
     for proba in y_predict_proba:
-        print(f'Percentage of patient will have a HeartDisease: {proba:.2%}')
+        print(f"Percentage of patient will have a HeartDisease: {proba:.2%}")
+
 
 def handlingOutlier():
-    #print("========================================")
-    #feature_histgram('Cholesterol')
-    df['Cholesterol'].replace(0, df['Cholesterol'].median(),inplace=True)
-    #print("df['Cholesterol']")
-    #print(df['Cholesterol'])
-    #feature_histgram('Cholesterol')
-    #print("========================================")
+    # print("========================================")
+    # feature_histgram('Cholesterol')
+    df["Cholesterol"].replace(0, df["Cholesterol"].median(), inplace=True)
+    # print("df['Cholesterol']")
+    # print(df['Cholesterol'])
+    # feature_histgram('Cholesterol')
+    # print("========================================")
 
 
 def encoding():
@@ -209,11 +211,6 @@ def clustering(df):
     plt.ylabel("number")
     plt.hist(df["clust"])
 
-def percentageFinding(df):
-    y = df['HeartDisease']
-    print(f'Percentage of patient had a HeartDisease:  {round(y.value_counts(normalize=True)[1]*100,2)} %  --> ({y.value_counts()[1]} patient)\nPercentage of patient did not have a HeartDisease: {round(y.value_counts(normalize=True)[0]*100,2)}  %  --> ({y.value_counts()[0]} patient)')
-
-
 
 if __name__ == "__main__":
     dataDetail()
@@ -221,6 +218,7 @@ if __name__ == "__main__":
     histogram()
     plot_box()
     checkNull()
+    handlingOutlier()
     dfEncode = encoding()
     df_norm = normalization(dfEncode)
     X_train, X_test, y_train, y_test = split_dataset(df_norm)
