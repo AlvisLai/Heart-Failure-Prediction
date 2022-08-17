@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
@@ -8,7 +9,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 from sklearn import tree
 from sklearn.metrics import accuracy_score
-import numpy as np
 from sklearn.model_selection import cross_val_score
 from sklearn.svm import SVC
 
@@ -88,6 +88,24 @@ def plot_box():
             y=column,
             x="HeartDisease",
         )
+
+
+def correlation_matrix():
+    plt.figure(figsize=(16, 6))
+    matrix = np.triu(df.corr())
+    heatmap = sns.heatmap(
+        df.corr(),
+        vmin=-1,
+        vmax=1,
+        annot=True,
+        fmt=".2f",
+        mask=matrix,
+    )
+    heatmap.set_title(
+        "Correlation Heatmap",
+        fontdict={"fontsize": 12},
+        pad=12,
+    )
 
 
 def checkNull():
