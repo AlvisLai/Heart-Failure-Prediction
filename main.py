@@ -11,6 +11,7 @@ from sklearn import tree
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
 
 # Load the data
 df = pd.read_csv("heart.csv")
@@ -151,7 +152,7 @@ def split_dataset(df):
 
 
 def logistic_regression(X_train, X_test, y_train, y_test):
-    clf = LogisticRegression(C=0.0001, max_iter=1000)
+    clf = LogisticRegression(max_iter=1000)
     clf.fit(X_train, y_train)
 
     # clf.predict(X_test)
@@ -169,14 +170,33 @@ def predict(clf, d):
     y_predict = clf.predict(d)
     y_predict_proba = clf.predict_proba(d)[:, 1]
     # print(y_pred)
+    print("===============logistic=====================")
     for predict in y_predict:
         if predict == 1:
             print("Heart Failure!!")
         else:
             print("Save!")
-    print("====================================")
     for proba in y_predict_proba:
         print(f"Percentage of patient will have a HeartDisease: {proba:.2%}")
+   
+def knn_predict(X_train, y_train, X_test, y_test, d):
+    knn = KNeighborsClassifier()
+    knn.fit(X_train, y_train)
+    knn_predict = knn.predict(d)
+    knn_predict_proba = knn.predict_proba(d)[:, 1]
+    
+    print("===============KNN=====================")
+    score = knn.score(X_test, y_test)
+    print("KNN score:", score)
+    
+    for predict in knn_predict:
+        if predict == 1:
+            print("Heart Failure!!")
+        else:
+            print("Save!")
+    
+    for proba in knn_predict_proba:
+        print(f"Percentage of patient will have a HeartDisease: {proba:.0%}")
 
 
 def handlingOutlier():
@@ -302,3 +322,4 @@ if __name__ == "__main__":
     ]
     df_test = pd.DataFrame(d)
     predict(clf, df_test)
+    knn_predict(X_train, y_train, X_test, y_test, df_test)
