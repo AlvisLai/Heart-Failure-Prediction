@@ -16,6 +16,30 @@ from sklearn.svm import SVC
 df = pd.read_csv("heart.csv")
 df.head()
 
+class MultiColumnLabelEncoder:
+    def __init__(self,columns = None):
+        self.columns = columns # array of column names to encode
+
+    def fit(self,X,y=None):
+        return self # not relevant here
+
+    def transform(self,X):
+        '''
+        Transforms columns of X specified in self.columns using
+        LabelEncoder(). If no columns specified, transforms all
+        columns in X.
+        '''
+        output = X.copy()
+        if self.columns is not None:
+            for col in self.columns:
+                output[col] = LabelEncoder().fit_transform(output[col])
+        else:
+            for colname,col in output.iteritems():
+                output[colname] = LabelEncoder().fit_transform(col)
+        return output
+
+    def fit_transform(self,X,y=None):
+        return self.fit(X,y).transform(X)
 
 def dataDetail():
     print("Column name: \n{0}".format(df.columns.values))
@@ -172,20 +196,25 @@ def encoding():
 
 
 def decision_tree(X_train, X_test, y_train, y_test):
+    target_name = "HeartDisease"
+    feature_names=df.columns.to_list()
+    feature_names.remove(target_name)
+    
     # Build the tree
-    dt = DecisionTreeClassifier(criterion="entropy", random_state=42)
+    dt = DecisionTreeClassifier(min_samples_split=30, criterion="entropy", random_state=42)
     # Fit the training data
     dt.fit(X_train, y_train)
     plt.figure(figsize=(100, 100))
-    tree.plot_tree(dt)
+    tree.plot_tree(dt,feature_names=feature_names,  
+                          class_names=['0','1'], filled ='True')
 
     testY_predict = dt.predict(X_test)
     # print("testY_predict: ", testY_predict)
     testY_scores = accuracy_score(y_test, testY_predict)
-    print("testY_scores: ", testY_scores)
+    print("Decision Tree Scores: ", testY_scores)
 
     score = np.mean(cross_val_score(dt, X_train, y_train, cv=10))
-    print("decision_tree cross_val_score:", score)
+    print("Decision Tree cross_val_score:", score)
 
 
 def svm(X_train, X_test, y_train, y_test):
@@ -219,7 +248,8 @@ if __name__ == "__main__":
     plot_box()
     checkNull()
     handlingOutlier()
-    dfEncode = encoding()
+    dfEncode = MultiColumnLabelEncoder(columns = ['Sex','ChestPainType','RestingECG','ExerciseAngina','ST_Slope']).fit_transform(df)
+    # dfEncode = encoding()
     df_norm = normalization(dfEncode)
     X_train, X_test, y_train, y_test = split_dataset(df_norm)
     clf = logistic_regression(X_train, X_test, y_train, y_test)
