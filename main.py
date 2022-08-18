@@ -247,19 +247,6 @@ def svm(X_train, X_test, y_train, y_test):
     print("accurancy score of rbf c=3:", model3.score(X_test, y_test))
 
 
-def clustering(df):
-    model = KMeans(n_clusters=6)  # 6 clusters?
-    model.fit(df)
-    print(model.labels_)
-    df["clust"] = pd.Series(model.labels_)
-    df.head()
-    print(model.cluster_centers_)
-    print(model.inertia_)
-    plt.figure()
-    plt.xlabel("clust")
-    plt.ylabel("number")
-    plt.hist(df["clust"])
-
 
 if __name__ == "__main__":
     dataDetail()
@@ -268,13 +255,13 @@ if __name__ == "__main__":
     plot_box()
     checkNull()
     handlingOutlier()
+    correlation_matrix()
     dfEncode = MultiColumnLabelEncoder(columns = ['Sex','ChestPainType','RestingECG','ExerciseAngina','ST_Slope']).fit_transform(df)
     # dfEncode = encoding()
     df_norm = normalization(dfEncode)
     X_train, X_test, y_train, y_test = split_dataset(df_norm)
     clf = logistic_regression(X_train, X_test, y_train, y_test)
 
-    # clustering(df_norm)
     decision_tree(dfEncode)
     svm(X_train, X_test, y_train, y_test)
 
